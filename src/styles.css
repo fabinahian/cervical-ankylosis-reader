@@ -71,11 +71,57 @@ button { font-family: inherit; cursor: pointer; }
 
 /* ---------- viewport ---------- */
 
+.viewer-col { flex: 1; display: flex; flex-direction: column; min-width: 0; min-height: 0; }
+
 .viewport {
   flex: 1; position: relative; background: #000;
   display: flex; align-items: center; justify-content: center;
-  min-width: 0; overflow: hidden;
+  min-width: 0; min-height: 0; overflow: hidden;
 }
+
+/* ---------- slider bar ---------- */
+
+.controls {
+  flex: 0 0 auto; display: flex; flex-direction: column; gap: 8px;
+  padding: 10px 16px 12px;
+  background: #17171b; border-top: 1px solid #2a2a31;
+}
+.ctl-row { display: flex; align-items: center; gap: 10px 18px; flex-wrap: wrap; }
+.slice-row { gap: 8px; flex-wrap: nowrap; }
+.slice-row input { flex: 1; min-width: 80px; }
+.ctl-name { font-size: 12.5px; color: #8b8b95; flex: 0 0 70px; }
+.ctl-val, .ctl-num { font-size: 12.5px; color: #c9c9d1; font-variant-numeric: tabular-nums; text-align: right; }
+.ctl-val { flex: 0 0 104px; }
+.ctl-num { flex: 0 0 50px; color: #9a9aa4; }
+.ctl { flex: 1 1 200px; display: flex; align-items: center; gap: 8px; min-width: 0; }
+.ctl input { flex: 1; min-width: 60px; }
+
+.step-btn {
+  flex: 0 0 36px; height: 30px; padding: 0;
+  font-size: 22px; line-height: 1;
+  background: #24242b; color: #c9c9d1;
+  border: 1px solid #33333c; border-radius: 5px;
+}
+.step-btn:hover { background: #2f2f37; color: #fff; }
+.step-btn:focus-visible { outline: 2px solid #4a8fd4; outline-offset: 1px; }
+
+input[type="range"] {
+  -webkit-appearance: none; appearance: none;
+  height: 24px; margin: 0; background: transparent; cursor: pointer;
+}
+input[type="range"]:focus { outline: none; }
+input[type="range"]::-webkit-slider-runnable-track { height: 6px; background: #33333c; border-radius: 3px; }
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 18px; height: 18px; margin-top: -6px;
+  border-radius: 50%; background: #4a8fd4; border: 2px solid #0d0d0f;
+}
+input[type="range"]::-moz-range-track { height: 6px; background: #33333c; border-radius: 3px; }
+input[type="range"]::-moz-range-thumb {
+  width: 14px; height: 14px; border-radius: 50%; background: #4a8fd4; border: 2px solid #0d0d0f;
+}
+input[type="range"]:hover::-webkit-slider-thumb { background: #62a3e6; }
+input[type="range"]:focus-visible::-webkit-slider-thumb { box-shadow: 0 0 0 3px rgba(74,143,212,.45); }
+.slice-row input[type="range"]::-webkit-slider-thumb { width: 22px; height: 22px; margin-top: -8px; }
 #canvas { display: block; }
 .vp-overlay {
   position: absolute; pointer-events: none;

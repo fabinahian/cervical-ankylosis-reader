@@ -50,8 +50,12 @@ user gesture.
 - Reads standard DICOM CT, including **JPEG Lossless** (`1.2.840.10008.1.2.4.70`),
   which browsers cannot decode natively
 - **Axial, sagittal and coronal** views — the reformats are computed from the volume
+- **On-screen sliders** for image position, brightness, contrast and zoom, plus
+  ‹ › step buttons (click for one image, hold to keep scrolling) — nothing
+  depends on the reader knowing mouse gestures
 - Bone and soft-tissue window presets, plus click-drag window/level like a PACS
-- Mouse-wheel stack scrolling, right-drag pan, Ctrl+wheel zoom
+- Mouse-wheel stack scrolling, right-drag pan, Ctrl+wheel zoom — all kept in
+  sync with the sliders
 - Slices ordered by `ImagePositionPatient`, not filename
 - Per-study geometry: slice thickness, pixel spacing and slice spacing are read per file
 

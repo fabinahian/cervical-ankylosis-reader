@@ -83,8 +83,22 @@
 
   /* reading screen mockup */
   .screen { display: flex; }
+  .screen-main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
   .screen-img { flex: 1; background: #000; position: relative; display: flex; align-items: center; justify-content: center; padding: 8px 0; }
-  .screen-img img { max-height: 260px; display: block; }
+  .screen-img img { max-height: 230px; display: block; }
+  .mock-ctl { border-top: 1px solid #2a2a31; padding: 7px 9px 8px; display: flex; flex-direction: column; gap: 6px; }
+  .mrow { display: flex; align-items: center; gap: 6px; font-size: 9.5px; }
+  .mname { color: #8b8b95; white-space: nowrap; }
+  .mval { color: #c9c9d1; white-space: nowrap; }
+  .mbtn {
+    color: #c9c9d1; background: #24242b; border: 1px solid #33333c; border-radius: 3px;
+    font-size: 12px; line-height: 1; padding: 1px 6px 3px;
+  }
+  .mtrack { flex: 1; height: 4px; background: #33333c; border-radius: 2px; position: relative; }
+  .mtrack i {
+    position: absolute; top: 50%; width: 10px; height: 10px; margin: -5px 0 0 -5px;
+    border-radius: 50%; background: #4a8fd4; border: 1.5px solid #0d0d0f;
+  }
   .screen-side { flex: 0 0 186px; background: var(--panel); border-left: 1px solid #2a2a31; padding: 12px 11px; }
   .sbar {
     background: var(--panel); border-bottom: 1px solid #2a2a31;
@@ -268,7 +282,21 @@
           <span class="tool sep">Reset view</span>
         </div>
         <div class="screen">
-          <div class="screen-img"><img src="{{SAGITTAL}}" alt="cervical spine"></div>
+          <div class="screen-main">
+            <div class="screen-img"><img src="{{SAGITTAL}}" alt="cervical spine"></div>
+            <div class="mock-ctl">
+              <div class="mrow">
+                <span class="mname">Image</span><span class="mbtn">&lsaquo;</span>
+                <span class="mtrack"><i style="left:48%"></i></span>
+                <span class="mbtn">&rsaquo;</span><span class="mval">Image 257 / 512</span>
+              </div>
+              <div class="mrow">
+                <span class="mname">Brightness</span><span class="mtrack"><i style="left:55%"></i></span>
+                <span class="mname">Contrast</span><span class="mtrack"><i style="left:15%"></i></span>
+                <span class="mname">Zoom</span><span class="mtrack"><i style="left:9%"></i></span>
+              </div>
+            </div>
+          </div>
           <div class="screen-side">
             <div class="sidehead">Ankylosis</div>
             <div class="sideq">Is ankylosis present at each level?</div>
@@ -293,16 +321,19 @@
           </div>
         </div></li>
         <li><span class="dot">3</span><div><b>Bone / Soft tissue</b> set the standard window settings.</div></li>
-        <li><span class="dot">4</span><div><b>The right hand panel</b> is where you record your findings.</div></li>
+        <li><span class="dot">4</span><div><b>The sliders under the picture</b> move through the images and change brightness, contrast and zoom.</div></li>
+        <li><span class="dot">5</span><div><b>The right hand panel</b> is where you record your findings.</div></li>
       </ul>
 
       <p style="margin-top:16px"><b>Moving around the images:</b></p>
       <table class="controls">
-        <tr><td>Move through the images</td><td>Roll the <b>mouse wheel</b> (or press <kbd>&uarr;</kbd> <kbd>&darr;</kbd>)</td></tr>
-        <tr><td>Adjust brightness / contrast</td><td>Hold the <b>left</b> mouse button and move the mouse</td></tr>
-        <tr><td>Slide the picture around</td><td>Hold the <b>right</b> mouse button and move the mouse</td></tr>
-        <tr><td>Zoom in and out</td><td>Hold <kbd>Ctrl</kbd> and roll the mouse wheel</td></tr>
-        <tr><td>Put everything back to normal</td><td>Click <b>Reset view</b></td></tr>
+        <tr><td>Move through the images</td><td>Drag the <b>Image</b> slider, or click <kbd>&lsaquo;</kbd> <kbd>&rsaquo;</kbd> (hold to keep going).
+          The mouse wheel and <kbd>&uarr;</kbd> <kbd>&darr;</kbd> keys also work.</td></tr>
+        <tr><td>Adjust brightness / contrast</td><td>Drag the <b>Brightness</b> and <b>Contrast</b> sliders.
+          Or hold the left mouse button on the picture and move the mouse.</td></tr>
+        <tr><td>Zoom in and out</td><td>Drag the <b>Zoom</b> slider, or hold <kbd>Ctrl</kbd> and roll the mouse wheel</td></tr>
+        <tr><td>Slide the picture around</td><td>Hold the <b>right</b> mouse button on the picture and move the mouse</td></tr>
+        <tr><td>Put everything back to normal</td><td>Click <b>Reset view</b>, or <b>Bone</b> / <b>Soft tissue</b> for the standard settings</td></tr>
       </table>
     </div>
   </div>

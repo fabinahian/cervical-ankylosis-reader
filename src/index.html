@@ -47,6 +47,7 @@
   </div>
 
   <div class="workspace">
+    <div class="viewer-col">
     <div class="viewport" id="viewport">
       <canvas id="canvas"></canvas>
 
@@ -66,13 +67,40 @@
       </div>
 
       <div class="vp-overlay" id="ovTopLeft"></div>
-      <div class="vp-overlay" id="ovBottomLeft"></div>
       <div class="vp-overlay" id="ovBottomRight"></div>
 
       <div class="loading" id="loading">
         <div class="loading-text" id="loadingText">Loading images&hellip;</div>
         <div class="loading-track"><div class="loading-fill" id="loadingFill"></div></div>
       </div>
+    </div>
+
+    <div class="controls">
+      <div class="ctl-row slice-row">
+        <span class="ctl-name">Image</span>
+        <button class="step-btn" id="slicePrev" title="Previous image">&#8249;</button>
+        <input type="range" id="sliceSlider" min="1" max="1" value="1" aria-label="Image">
+        <button class="step-btn" id="sliceNext" title="Next image">&#8250;</button>
+        <span class="ctl-val" id="sliceVal">&ndash;</span>
+      </div>
+      <div class="ctl-row">
+        <label class="ctl">
+          <span class="ctl-name">Brightness</span>
+          <input type="range" id="brightSlider" min="-1400" max="400" step="5" value="-400">
+          <span class="ctl-num" id="brightVal"></span>
+        </label>
+        <label class="ctl">
+          <span class="ctl-name">Contrast</span>
+          <input type="range" id="contrastSlider" min="0" max="1000" value="150">
+          <span class="ctl-num" id="contrastVal"></span>
+        </label>
+        <label class="ctl">
+          <span class="ctl-name">Zoom</span>
+          <input type="range" id="zoomSlider" min="50" max="600" step="5" value="100">
+          <span class="ctl-num" id="zoomVal"></span>
+        </label>
+      </div>
+    </div>
     </div>
 
     <div class="panel">

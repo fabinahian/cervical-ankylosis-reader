@@ -33,7 +33,9 @@ var state = {
 var el = {};
 ['setup','app','setupSub','pickBtn','folderInput','folderStatus','restoreBtn','restoreInput',
  'caseLabel','caseCount','progFill','progText','readerChip','exportBtn',
- 'viewport','canvas','ovTopLeft','ovBottomLeft','ovBottomRight','loading','loadingText','loadingFill',
+ 'viewport','canvas','ovTopLeft','ovBottomRight','loading','loadingText','loadingFill',
+ 'sliceSlider','slicePrev','sliceNext','sliceVal','brightSlider','brightVal',
+ 'contrastSlider','contrastVal','zoomSlider','zoomVal',
  'vertList','confBtns','prevBtn','nextBtn','footNote','backdrop','dlgTitle','dlgBody','dlgActions','toast','resetBtn'
 ].forEach(function (id) { el[id] = document.getElementById(id); });
 
@@ -334,14 +336,37 @@ function draw() {
 function updateOverlays(info) {
   var viewName = state.view.charAt(0).toUpperCase() + state.view.slice(1);
   el.ovTopLeft.innerHTML = viewName;
-  el.ovBottomLeft.innerHTML =
-    'Image ' + (state.slice + 1) + ' / ' + (info.max + 1) +
-    '<br>W ' + Math.round(state.ww) + '  L ' + Math.round(state.wc) +
-    (state.zoom !== 1 ? '<br>Zoom ' + state.zoom.toFixed(1) + 'x' : '');
   el.ovBottomRight.innerHTML =
-    'Scroll wheel: move through images<br>' +
-    'Drag: brightness / contrast<br>' +
-    'Right-drag: move &nbsp; Ctrl+wheel: zoom';
+    'Mouse wheel also moves through images<br>' +
+    'Right-drag on the picture to move it';
+  syncControls(info);
+}
+
+/* ---------------- slider bar ---------------- */
+
+// Contrast is window width on a log scale, so both wide bone windows and
+// narrow soft-tissue windows get usable slider resolution.
+var WW_MAX = 4000, WW_MIN = 20;
+function wwToSlider(ww) { return Math.round(1000 * Math.log(ww / WW_MAX) / Math.log(WW_MIN / WW_MAX)); }
+function sliderToWw(v)  { return WW_MAX * Math.pow(WW_MIN / WW_MAX, v / 1000); }
+
+function syncControls(info) {
+  el.sliceSlider.max = info.max + 1;          // max before value, or the value gets clamped
+  el.sliceSlider.value = state.slice + 1;
+  el.sliceVal.textContent = 'Image ' + (state.slice + 1) + ' / ' + (info.max + 1);
+  el.brightSlider.value = -state.wc;          // right = brighter = lower window level
+  el.brightVal.textContent = 'L ' + Math.round(state.wc);
+  el.contrastSlider.value = wwToSlider(state.ww);
+  el.contrastVal.textContent = 'W ' + Math.round(state.ww);
+  el.zoomSlider.value = Math.round(state.zoom * 100);
+  el.zoomVal.textContent = Math.round(state.zoom * 100) + '%';
+}
+
+var drawQueued = false;
+function requestDraw() {
+  if (drawQueued) return;
+  drawQueued = true;
+  requestAnimationFrame(function () { drawQueued = false; draw(); });
 }
 
 /* ---------------- case navigation ---------------- */
@@ -510,7 +535,7 @@ el.viewport.addEventListener('wheel', function (e) {
   if (!state.volume) return;
   e.preventDefault();
   if (e.ctrlKey) {
-    state.zoom = Math.max(0.5, Math.min(8, state.zoom * (e.deltaY < 0 ? 1.12 : 1 / 1.12)));
+    state.zoom = Math.max(0.5, Math.min(6, state.zoom * (e.deltaY < 0 ? 1.12 : 1 / 1.12)));
   } else {
     state.slice += e.deltaY > 0 ? 1 : -1;
     clampSlice();
@@ -541,8 +566,57 @@ el.viewport.addEventListener('contextmenu', function (e) { e.preventDefault(); }
 
 window.addEventListener('keydown', function (e) {
   if (!state.volume || el.backdrop.classList.contains('show')) return;
-  if (e.key === 'ArrowDown' || e.key === 'ArrowRight') { state.slice++; clampSlice(); draw(); e.preventDefault(); }
-  if (e.key === 'ArrowUp' || e.key === 'ArrowLeft')   { state.slice--; clampSlice(); draw(); e.preventDefault(); }
+  // a focused slider handles its own arrow keys; don't also move the image
+  if (e.target && e.target.type === 'range') return;
+  if (e.key === 'ArrowDown' || e.key === 'ArrowRight') { stepSlice(1);  e.preventDefault(); }
+  if (e.key === 'ArrowUp' || e.key === 'ArrowLeft')   { stepSlice(-1); e.preventDefault(); }
+});
+
+function stepSlice(delta) {
+  if (!state.volume) return;
+  state.slice += delta;
+  clampSlice();
+  draw();
+}
+
+// click = one image; press and hold = keep scrolling
+function holdToRepeat(btn, delta) {
+  var wait, repeat;
+  function stop() { clearTimeout(wait); clearInterval(repeat); }
+  btn.addEventListener('mousedown', function (e) {
+    if (e.button !== 0) return;
+    stepSlice(delta);
+    wait = setTimeout(function () { repeat = setInterval(function () { stepSlice(delta); }, 45); }, 350);
+  });
+  btn.addEventListener('mouseup', stop);
+  btn.addEventListener('mouseleave', stop);
+  btn.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); stepSlice(delta); }
+  });
+}
+holdToRepeat(el.slicePrev, -1);
+holdToRepeat(el.sliceNext, 1);
+
+el.sliceSlider.addEventListener('input', function () {
+  if (!state.volume) return;
+  state.slice = parseInt(el.sliceSlider.value, 10) - 1;
+  clampSlice();
+  requestDraw();
+});
+el.brightSlider.addEventListener('input', function () {
+  if (!state.volume) return;
+  state.wc = -parseFloat(el.brightSlider.value);
+  requestDraw();
+});
+el.contrastSlider.addEventListener('input', function () {
+  if (!state.volume) return;
+  state.ww = sliderToWw(parseFloat(el.contrastSlider.value));
+  requestDraw();
+});
+el.zoomSlider.addEventListener('input', function () {
+  if (!state.volume) return;
+  state.zoom = parseFloat(el.zoomSlider.value) / 100;
+  requestDraw();
 });
 
 window.addEventListener('resize', function () { if (state.volume) draw(); });
