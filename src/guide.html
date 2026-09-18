@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>How to use the Ankylosis Study viewer</title>
+<style>
+  :root {
+    --ink: #1a1a1f;
+    --muted: #5d5d68;
+    --line: #d8d8de;
+    --accent: #2f6fb0;
+    --panel: #17171b;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 0;
+    font-family: "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: var(--ink); background: #f2f2f5;
+    font-size: 15px; line-height: 1.6;
+  }
+  .page {
+    width: 210mm; min-height: 297mm; margin: 0 auto 10mm; padding: 16mm 18mm;
+    background: #fff; box-shadow: 0 2px 14px rgba(0,0,0,.12);
+  }
+
+  h1 { font-size: 27px; margin: 0 0 6px; letter-spacing: -.3px; }
+  .lede { font-size: 16px; color: #45454e; margin: 0 0 8px; }
+  .reassure {
+    background: #eef5fc; border-left: 4px solid var(--accent);
+    padding: 12px 16px; margin: 18px 0 30px; font-size: 14.5px;
+  }
+
+  .step { margin: 0 0 30px; page-break-inside: avoid; }
+  .step-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 12px; }
+  .num {
+    flex: 0 0 34px; height: 34px; border-radius: 50%;
+    background: var(--accent); color: #fff;
+    font-size: 18px; font-weight: 600;
+    display: flex; align-items: center; justify-content: center;
+    align-self: flex-start;
+  }
+  .step h2 { font-size: 19px; margin: 3px 0 0; font-weight: 600; }
+  .step-body { padding-left: 46px; }
+  .step-body p { margin: 0 0 10px; }
+  ol.tight { margin: 8px 0 12px; padding-left: 20px; }
+  ol.tight li { margin-bottom: 7px; }
+
+  kbd {
+    background: #eceef1; border: 1px solid #c8ccd2; border-bottom-width: 2px;
+    border-radius: 4px; padding: 1px 7px; font-size: 13px;
+    font-family: inherit; white-space: nowrap;
+  }
+  .btnish {
+    display: inline-block; background: var(--accent); color: #fff;
+    padding: 3px 11px; border-radius: 4px; font-size: 13.5px; font-weight: 500;
+  }
+
+  /* folder tree */
+  .tree {
+    font-family: Consolas, "Courier New", monospace; font-size: 13.5px;
+    background: #fafafc; border: 1px solid var(--line); border-radius: 6px;
+    padding: 14px 18px; line-height: 1.75; margin: 12px 0;
+  }
+  .tree .f::before { content: "\1F4C1  "; }
+  .tree .d::before { content: "\1F4C4  "; }
+  .tree .lvl1 { padding-left: 22px; }
+  .tree .lvl2 { padding-left: 44px; }
+  .tree .note { color: #82828c; font-family: inherit; font-size: 12.5px; }
+
+  /* app mockups */
+  .shot {
+    background: var(--panel); border: 1px solid #2a2a31; border-radius: 8px;
+    overflow: hidden; margin: 14px 0; color: #e8e8ea;
+  }
+  .shot-card { padding: 26px 28px; }
+  .shot-card h3 { margin: 0 0 4px; font-size: 18px; color: #fff; font-weight: 600; }
+  .shot-card .s { color: #8b8b95; font-size: 13px; margin-bottom: 18px; }
+  .fakebtn {
+    display: inline-block; background: var(--accent); color: #fff;
+    padding: 12px 22px; border-radius: 6px; font-size: 15px; font-weight: 500;
+  }
+  .shot-card .hint { color: #74747e; font-size: 12px; margin-top: 14px; max-width: 380px; line-height: 1.5; }
+
+  /* reading screen mockup */
+  .screen { display: flex; }
+  .screen-img { flex: 1; background: #000; position: relative; display: flex; align-items: center; justify-content: center; padding: 8px 0; }
+  .screen-img img { max-height: 260px; display: block; }
+  .screen-side { flex: 0 0 186px; background: var(--panel); border-left: 1px solid #2a2a31; padding: 12px 11px; }
+  .sbar {
+    background: var(--panel); border-bottom: 1px solid #2a2a31;
+    padding: 8px 12px; display: flex; align-items: center; gap: 12px; font-size: 12px;
+  }
+  .sbar .cid { font-weight: 600; font-size: 13px; }
+  .sbar .cnt { color: #8b8b95; }
+  .sbar .save { margin-left: auto; border: 1px solid #383841; border-radius: 5px; padding: 4px 10px; color: #c9c9d1; }
+  .tools { display: flex; gap: 4px; padding: 7px 8px; border-bottom: 1px solid #2a2a31; background: #111114; }
+  .tool { font-size: 11.5px; color: #9a9aa4; padding: 4px 9px; border-radius: 4px; }
+  .tool.on { background: var(--accent); color: #fff; }
+  .tool.sep { margin-left: 8px; border-left: 1px solid #33333c; padding-left: 13px; }
+
+  .vrow { display: flex; align-items: center; gap: 4px; margin-bottom: 4px; }
+  .vname { width: 22px; font-size: 11.5px; font-weight: 600; color: #c9c9d1; }
+  .vopt {
+    flex: 1; text-align: center; font-size: 10px; padding: 5px 2px;
+    background: #1f1f25; border: 1px solid #33333c; border-radius: 4px; color: #9a9aa4;
+  }
+  .vopt.yes { background: #b8543f; border-color: #b8543f; color: #fff; }
+  .vopt.no  { background: #3d7a4a; border-color: #3d7a4a; color: #fff; }
+  .vopt.na  { background: #5a5a66; border-color: #5a5a66; color: #fff; }
+  .sidehead { font-size: 10.5px; letter-spacing: .5px; color: #c9c9d1; text-transform: uppercase; margin-bottom: 3px; }
+  .sideq { font-size: 10.5px; color: #8b8b95; margin-bottom: 9px; }
+  .nextfake { background: var(--accent); color: #fff; text-align: center; padding: 8px; border-radius: 5px; font-size: 12px; margin-top: 10px; }
+
+  /* callouts */
+  .callouts { margin: 12px 0 0; padding: 0; list-style: none; }
+  .callouts li { display: flex; gap: 10px; margin-bottom: 8px; align-items: flex-start; font-size: 14px; }
+  .dot {
+    flex: 0 0 21px; height: 21px; border-radius: 50%; background: #1a1a1f; color: #fff;
+    font-size: 12px; font-weight: 600; display: flex; align-items: center; justify-content: center;
+    margin-top: 1px;
+  }
+
+  .planes { display: flex; gap: 14px; margin: 10px 0 4px; }
+  .planes figure { margin: 0; }
+  .planes img { height: 118px; display: block; background: #000; border: 1px solid var(--line); border-radius: 4px; }
+  .planes figcaption { font-size: 12px; color: #82828c; margin-top: 4px; text-align: center; }
+
+  table.controls { width: 100%; border-collapse: collapse; margin: 10px 0; }
+  table.controls td { padding: 9px 8px; border-bottom: 1px solid var(--line); vertical-align: top; font-size: 14.5px; }
+  table.controls td:first-child { width: 46%; color: #45454e; }
+  table.controls tr:last-child td { border-bottom: none; }
+
+  .answers { margin: 10px 0; }
+  .ansrow { display: flex; gap: 12px; align-items: center; margin-bottom: 9px; }
+  .anschip { flex: 0 0 96px; text-align: center; padding: 7px 0; border-radius: 5px; font-size: 13.5px; font-weight: 500; color: #fff; }
+  .anschip.y { background: #b8543f; }
+  .anschip.n { background: #3d7a4a; }
+  .anschip.x { background: #5a5a66; }
+
+  .warn {
+    background: #fff6e8; border-left: 4px solid #d99a5b;
+    padding: 13px 16px; margin: 16px 0; font-size: 14.5px;
+  }
+  .warn b { color: #8a5a1c; }
+
+  .tshoot { margin-top: 8px; }
+  .tshoot dt { font-weight: 600; margin-top: 14px; font-size: 14.5px; }
+  .tshoot dd { margin: 4px 0 0; color: #45454e; font-size: 14.5px; }
+
+  .foot { margin-top: 34px; padding-top: 14px; border-top: 1px solid var(--line); color: #82828c; font-size: 13px; }
+
+  @media print {
+    body { background: #fff; font-size: 11.5pt; }
+    /* let content paginate naturally; steps are kept whole by page-break-inside */
+    .page { width: auto; min-height: 0; margin: 0; padding: 0; box-shadow: none; }
+    .noprint { display: none; }
+  }
+  .noprint {
+    position: fixed; top: 14px; right: 14px;
+    background: var(--accent); color: #fff; border: none; border-radius: 6px;
+    padding: 10px 16px; font-size: 14px; cursor: pointer; font-family: inherit;
+  }
+</style>
+</head>
+<body>
+
+<button class="noprint" onclick="window.print()">Print this guide</button>
+
+<!-- ============ PAGE 1 ============ -->
+<div class="page">
+  <h1>Cervical Spine Ankylosis Study</h1>
+  <p class="lede">How to read the cases &mdash; a short picture guide.</p>
+
+  <div class="reassure">
+    There is <b>nothing to install</b>. The images stay on your own computer and
+    <b>nothing is sent over the internet</b>. If you get stuck at any point, stop and
+    contact us rather than guessing &mdash; nothing you do can damage the images.
+  </div>
+
+  <div class="step">
+    <div class="step-head">
+      <div class="num">1</div>
+      <h2>Put the files together in one folder</h2>
+    </div>
+    <div class="step-body">
+      <p>You will receive one file called <b>Ankylosis-Study.html</b> and several
+         files called <b>CASES-batch-1.zip</b>, <b>CASES-batch-2.zip</b> and so on.</p>
+      <ol class="tight">
+        <li>Make a new folder on your Desktop called <b>ANKYLOSIS STUDY</b>.</li>
+        <li>Move <b>Ankylosis-Study.html</b> into it.</li>
+        <li>Right-click each zip file, choose <b>Extract All&hellip;</b>, and extract it
+            into that same folder.</li>
+      </ol>
+      <p>All the batches join together into one folder called <b>CASES</b>.
+         When you are done it should look like this:</p>
+
+      <div class="tree">
+        <div class="f">ANKYLOSIS STUDY</div>
+        <div class="lvl1 d">Ankylosis-Study.html <span class="note">&larr; you open this one</span></div>
+        <div class="lvl1 f">CASES <span class="note">&larr; you point the program at this one</span></div>
+        <div class="lvl2 f">Case-001</div>
+        <div class="lvl2 f">Case-002</div>
+        <div class="lvl2 f">Case-003 <span class="note">&hellip; and so on</span></div>
+      </div>
+
+      <p>You can delete the zip files afterwards if you need the space.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-head">
+      <div class="num">2</div>
+      <h2>Open the program</h2>
+    </div>
+    <div class="step-body">
+      <p>Double-click <b>Ankylosis-Study.html</b>. It opens in your web browser.
+         Please use <b>Google Chrome</b> or <b>Microsoft Edge</b>. You will see this:</p>
+
+      <div class="shot">
+        <div class="shot-card">
+          <h3>Cervical Spine Ankylosis Study</h3>
+          <div class="s">Click the button below to begin.</div>
+          <div class="fakebtn">Open the image folder</div>
+          <div class="hint">Choose the folder named <b style="color:#a5a5ae">CASES</b>.
+            Your browser will ask whether to upload the folder &mdash; this is a standard
+            message, nothing leaves your computer.</div>
+        </div>
+      </div>
+
+      <p>Click <span class="btnish">Open the image folder</span>, then choose the folder
+         called <b>CASES</b> and click <b>Select Folder</b>.</p>
+
+      <div class="warn">
+        <b>You will then see a message asking whether to upload the folder.</b>
+        This wording comes from the browser itself, not from us. Nothing is uploaded
+        anywhere &mdash; it is only asking permission to read files already on your computer.
+        Click <b>Upload</b> to continue.
+      </div>
+
+      <p>The first case appears after a few seconds.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 2 ============ -->
+<div class="page">
+  <div class="step">
+    <div class="step-head">
+      <div class="num">3</div>
+      <h2>The reading screen</h2>
+    </div>
+    <div class="step-body">
+
+      <div class="shot">
+        <div class="sbar">
+          <span class="cid">Case-001</span>
+          <span class="cnt">Case 1 of 87</span>
+          <span class="cnt">&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</span>
+          <span class="cnt">0 of 87 completed</span>
+          <span class="save">Save results file</span>
+        </div>
+        <div class="tools">
+          <span class="tool">Axial</span>
+          <span class="tool on">Sagittal</span>
+          <span class="tool">Coronal</span>
+          <span class="tool on sep">Bone</span>
+          <span class="tool">Soft tissue</span>
+          <span class="tool sep">Reset view</span>
+        </div>
+        <div class="screen">
+          <div class="screen-img"><img src="{{SAGITTAL}}" alt="cervical spine"></div>
+          <div class="screen-side">
+            <div class="sidehead">Ankylosis</div>
+            <div class="sideq">Is ankylosis present at each level?</div>
+            <div class="vrow"><span class="vname">C1</span><span class="vopt">Yes</span><span class="vopt no">No</span><span class="vopt">Can't tell</span></div>
+            <div class="vrow"><span class="vname">C2</span><span class="vopt">Yes</span><span class="vopt no">No</span><span class="vopt">Can't tell</span></div>
+            <div class="vrow"><span class="vname">C3</span><span class="vopt yes">Yes</span><span class="vopt">No</span><span class="vopt">Can't tell</span></div>
+            <div class="vrow"><span class="vname">C4</span><span class="vopt yes">Yes</span><span class="vopt">No</span><span class="vopt">Can't tell</span></div>
+            <div class="vrow"><span class="vname">C5</span><span class="vopt">Yes</span><span class="vopt no">No</span><span class="vopt">Can't tell</span></div>
+            <div class="vrow"><span class="vname">C6</span><span class="vopt">Yes</span><span class="vopt no">No</span><span class="vopt">Can't tell</span></div>
+            <div class="vrow"><span class="vname">C7</span><span class="vopt">Yes</span><span class="vopt">No</span><span class="vopt na">Can't tell</span></div>
+            <div class="nextfake">Next case</div>
+          </div>
+        </div>
+      </div>
+
+      <ul class="callouts">
+        <li><span class="dot">1</span><div><b>Top left</b> shows which case you are on and how many you have finished.</div></li>
+        <li><span class="dot">2</span><div><b>Axial / Sagittal / Coronal</b> switch between the three planes. You can move freely between them.
+          <div class="planes">
+            <figure><img src="{{AXIAL}}" alt="axial view"><figcaption>Axial</figcaption></figure>
+            <figure><img src="{{SAGITTAL}}" alt="sagittal view"><figcaption>Sagittal</figcaption></figure>
+          </div>
+        </div></li>
+        <li><span class="dot">3</span><div><b>Bone / Soft tissue</b> set the standard window settings.</div></li>
+        <li><span class="dot">4</span><div><b>The right hand panel</b> is where you record your findings.</div></li>
+      </ul>
+
+      <p style="margin-top:16px"><b>Moving around the images:</b></p>
+      <table class="controls">
+        <tr><td>Move through the images</td><td>Roll the <b>mouse wheel</b> (or press <kbd>&uarr;</kbd> <kbd>&darr;</kbd>)</td></tr>
+        <tr><td>Adjust brightness / contrast</td><td>Hold the <b>left</b> mouse button and move the mouse</td></tr>
+        <tr><td>Slide the picture around</td><td>Hold the <b>right</b> mouse button and move the mouse</td></tr>
+        <tr><td>Zoom in and out</td><td>Hold <kbd>Ctrl</kbd> and roll the mouse wheel</td></tr>
+        <tr><td>Put everything back to normal</td><td>Click <b>Reset view</b></td></tr>
+      </table>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-head">
+      <div class="num">4</div>
+      <h2>Recording your findings</h2>
+    </div>
+    <div class="step-body">
+      <p>For every level from <b>C1</b> to <b>C7</b>, choose one of three answers:</p>
+      <div class="answers">
+        <div class="ansrow"><span class="anschip y">Yes</span><span>Ankylosis is present at this level.</span></div>
+        <div class="ansrow"><span class="anschip n">No</span><span>Ankylosis is not present at this level.</span></div>
+        <div class="ansrow"><span class="anschip x">Can't tell</span><span>This level cannot be judged &mdash; for example it is not fully
+          included in the scan, or artefact obscures it. Please use this rather than guessing.</span></div>
+      </div>
+      <p>Then choose how confident you are about the case overall
+         (<b>Low</b>, <b>Moderate</b> or <b>High</b>).</p>
+      <p>The <span class="btnish">Next case</span> button only turns blue once every level has
+         been answered. Anything still missing is listed underneath it. To change an answer,
+         simply click a different button. To revisit an earlier case, click <b>Back</b>.</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============ PAGE 3 ============ -->
+<div class="page">
+  <div class="step">
+    <div class="step-head">
+      <div class="num">5</div>
+      <h2>Saving and sending your work</h2>
+    </div>
+    <div class="step-body">
+      <p>Your answers are saved automatically as you go. You may close the page at any time
+         and come back later &mdash; it will continue from where you stopped.</p>
+
+      <div class="warn">
+        <b>At the end of every session, click &ldquo;Save results file&rdquo;</b> at the top right.
+        A file is placed in your <b>Downloads</b> folder with a name like
+        <b style="white-space:nowrap">ankylosis-FNGHKG-20260918-1430.csv</b>.
+        Please email that file back to us.
+      </div>
+
+      <p>It does not matter if you send it more than once, or if you have not finished all
+         the cases yet. Just always send the most recent file.</p>
+    </div>
+  </div>
+
+  <div class="step">
+    <div class="step-head">
+      <div class="num">?</div>
+      <h2>If something goes wrong</h2>
+    </div>
+    <div class="step-body">
+      <dl class="tshoot">
+        <dt>It says no images were found</dt>
+        <dd>The wrong folder was chosen. Click the button again and select the folder named
+            <b>CASES</b> &mdash; not one of the <b>Case-001</b> folders inside it, and not a zip file.</dd>
+
+        <dt>The page is blank, or it opened in the wrong program</dt>
+        <dd>Right-click <b>Ankylosis-Study.html</b>, choose <b>Open with</b>, and select
+            <b>Google Chrome</b> or <b>Microsoft Edge</b>.</dd>
+
+        <dt>It takes a while to open a case</dt>
+        <dd>Normal for the first case. After that, the next case is quietly prepared in the
+            background while you are reading, so it should appear straight away.</dd>
+
+        <dt>I think I lost my answers</dt>
+        <dd>Look in your <b>Downloads</b> folder for a file whose name starts with
+            <b>ankylosis-backup</b>. Open the program and click
+            <b>Restore from a backup file</b> at the bottom of the first screen.</dd>
+
+        <dt>Anything else</dt>
+        <dd>Please contact us before carrying on, and mention the <b>six-letter code</b>
+            shown at the top right of the screen.</dd>
+      </dl>
+    </div>
+  </div>
+
+  <div class="foot">
+    Thank you for taking part. Please read the cases in the order the program presents them,
+    and do not discuss individual cases with the other readers while the study is running.
+  </div>
+</div>
+
+</body>
+</html>

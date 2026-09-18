@@ -1,0 +1,32 @@
+# ---------------------------------------------------------------------------
+# Patient data and anything that could re-identify it must never be committed.
+# ---------------------------------------------------------------------------
+*.dcm
+CASES/
+Case-*/
+*.zip
+
+# Output of prepare-batches.ps1
+SEND-TO-DOCTORS/
+KEEP-PRIVATE/
+*case-mapping.csv
+PRIVATE-*
+
+# Results returned by readers
+ankylosis-*.csv
+ankylosis-backup-*.json
+
+# Sample renders used in the reader guide - supply your own, see README
+assets/*.jpg
+assets/*.png
+
+# Local scratch
+TEST-RUN/
+_dev/
+
+# OS / editor
+Thumbs.db
+desktop.ini
+.DS_Store
+.vscode/
+.idea/

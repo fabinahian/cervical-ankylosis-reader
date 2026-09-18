@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Cervical Spine Ankylosis Study</title>
+<!--[styles]-->
+<link rel="stylesheet" href="styles.css">
+<!--[/styles]-->
+</head>
+<body>
+
+<div id="setup">
+  <div class="setup-card">
+    <h1>Cervical Spine Ankylosis Study</h1>
+    <div class="sub" id="setupSub">Click the button below to begin.</div>
+
+    <button class="big-btn start" id="pickBtn">Open the image folder</button>
+    <input type="file" id="folderInput" webkitdirectory directory multiple hidden>
+
+    <div class="hint">
+      Choose the folder named <b>CASES</b>. Your browser will ask whether to upload the folder &mdash;
+      this is a standard message, nothing leaves your computer. Click <b>Upload</b> to continue.
+    </div>
+    <div id="folderStatus"></div>
+
+    <div class="setup-foot">
+      <a href="#" id="restoreBtn">Restore from a backup file</a>
+      <input type="file" id="restoreInput" accept=".json" hidden>
+    </div>
+  </div>
+</div>
+
+<div id="app">
+  <div class="topbar">
+    <div>
+      <div class="case-label" id="caseLabel">&mdash;</div>
+    </div>
+    <div class="case-count" id="caseCount"></div>
+    <div class="progress-wrap">
+      <div class="progress-track"><div class="progress-fill" id="progFill"></div></div>
+      <div class="progress-text" id="progText"></div>
+    </div>
+    <div class="topbar-right">
+      <span class="reader-chip" id="readerChip"></span>
+      <button class="ghost-btn" id="exportBtn">Save results file</button>
+    </div>
+  </div>
+
+  <div class="workspace">
+    <div class="viewport" id="viewport">
+      <canvas id="canvas"></canvas>
+
+      <div class="toolbar">
+        <div class="tool-group">
+          <button class="tool-btn active" data-view="axial">Axial</button>
+          <button class="tool-btn" data-view="sagittal">Sagittal</button>
+          <button class="tool-btn" data-view="coronal">Coronal</button>
+        </div>
+        <div class="tool-group">
+          <button class="tool-btn active" data-window="bone">Bone</button>
+          <button class="tool-btn" data-window="soft">Soft tissue</button>
+        </div>
+        <div class="tool-group">
+          <button class="tool-btn" id="resetBtn">Reset view</button>
+        </div>
+      </div>
+
+      <div class="vp-overlay" id="ovTopLeft"></div>
+      <div class="vp-overlay" id="ovBottomLeft"></div>
+      <div class="vp-overlay" id="ovBottomRight"></div>
+
+      <div class="loading" id="loading">
+        <div class="loading-text" id="loadingText">Loading images&hellip;</div>
+        <div class="loading-track"><div class="loading-fill" id="loadingFill"></div></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-head">
+        Ankylosis
+        <span class="q">Is ankylosis present at each level?</span>
+      </div>
+      <div class="vert-list" id="vertList"></div>
+
+      <div class="conf-block">
+        <div class="conf-label">Overall confidence in this case</div>
+        <div class="conf-btns" id="confBtns">
+          <button class="conf-btn" data-conf="Low">Low</button>
+          <button class="conf-btn" data-conf="Moderate">Moderate</button>
+          <button class="conf-btn" data-conf="High">High</button>
+        </div>
+      </div>
+
+      <div class="panel-foot">
+        <div class="nav-row">
+          <button class="nav-btn" id="prevBtn">Back</button>
+          <button class="nav-btn" id="nextBtn">Next case</button>
+        </div>
+        <div class="foot-note" id="footNote"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="backdrop" id="backdrop">
+  <div class="dialog">
+    <h2 id="dlgTitle"></h2>
+    <div id="dlgBody"></div>
+    <div class="dialog-actions" id="dlgActions"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!--[libs]-->
+<script src="../lib/dicomParser.min.js"></script>
+<script>var module = { exports: {} }; var exports = module.exports;</script>
+<script src="../lib/lossless.cjs"></script>
+<script>var losslessLib = module.exports; module = undefined; exports = undefined;</script>
+<!--[/libs]-->
+
+<!--[app]-->
+<script src="app.js"></script>
+<!--[/app]-->
+
+</body>
+</html>
